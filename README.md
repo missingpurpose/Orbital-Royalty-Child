@@ -1,6 +1,6 @@
-# Alkane Pandas Child
+# Orbital Royalty Child
 
-A factory contract used by the Alkane Pandas collection contract for creating individual Alkane Pandas.
+A factory contract used by the Alkane Pandas collection contract for creating individual Orbital Royalty NFTs.
 
 ## Building
 

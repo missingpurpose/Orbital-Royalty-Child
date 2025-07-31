@@ -21,16 +21,48 @@ This is the **child contract** of the world's first truly unavoidable Bitcoin NF
 
 ---
 
+## 🎨 **Algorithmic Art Integration**
+
+### **Dynamic Metadata System**
+Each NFT generates unique art by calling back to the Collection Contract:
+
+```rust
+fn get_data(&self) -> Result<CallResponse> {
+    let collection_id = self.collection_ref();
+    let cellpack = Cellpack {
+        target: collection_id, 
+        inputs: vec![1000, self.index()], // Collection.GetData + NFT index
+    };
+    // Returns algorithmic SVG based on NFT's unique index
+}
+```
+
+### **Art Features**
+- **🎨 6 Art Styles**: Geometric Fractal, Flow Field, Circle Packing, Mandala, Wave Interference, Crystalline
+- **🌈 12 Color Palettes**: Sunset, Ocean, Cosmic, Neon, Aurora, Forest, Volcanic, Arctic, Desert, Tropical, Cyberpunk, Ethereal
+- **📊 Built-in Rarity**: Automatic scoring system (90-180 points per NFT)
+- **🔍 Mathematical Uniqueness**: Every NFT provably unique through index-based generation
+
+### **Collection Contract Integration**
+- **🏭 Parent Contract**: Each child references its collection contract
+- **🎨 Art Delegation**: Child calls collection for dynamic SVG generation
+- **📊 Metadata Delegation**: Child calls collection for algorithmic attributes
+- **💰 Royalty Forwarding**: Child sends royalties to collection contract
+
+---
+
 ## 📊 **Contract Opcodes**
 
 | Opcode | Function | Parameters | Returns | Purpose |
 |--------|----------|------------|---------|---------|
 | **0** | **Initialize** | `index: u128` | NFT token (1 unit) | Create NFT instance with unique index |
-| **�� 88** | **TransferWithRoyalty** | `sale_price: u128` | Transfer to buyer | **ONLY transfer method - enforces 5% royalty** |
+| **🔒 88** | **TransferWithRoyalty** | `sale_price: u128` | Transfer to buyer | **ONLY transfer method - enforces 5% royalty** |
 | **89** | **GetRoyaltyInfo** | `none` | `Vec<u8>` | Returns [500, collection_block, collection_tx] |
 | **99** | **GetName** | `none` | `String` | Returns "Alkane RoyaltyNFT #[index]" |
 | **100** | **GetSymbol** | `none` | `String` | Returns "RoyaltyNFT" |
 | **101** | **GetTotalSupply** | `none` | `u128` | Returns 1 (unique NFT) |
+| **998** | **GetCollectionIdentifier** | `none` | `String` | Returns collection AlkaneId as string |
+| **999** | **GetCollectionAlkaneId** | `none` | `Vec<u8>` | Returns collection AlkaneId bytes |
 | **🎨 1000** | **GetData** | `none` | `Vec<u8>` | **Delegates to collection** - Gets algorithmic SVG |
 | **1001** | **GetContentType** | `none` | `String` | Returns "image/svg+xml" |
 | **🎨 1002** | **GetAttributes** | `none` | `String` | **Delegates to collection** - Gets algorithmic attributes |
@@ -88,6 +120,29 @@ oyl provider alkanes --method call \
 oyl provider alkanes --method call \
   --calldata "1002" \
   --alkane-id "NFT_ALKANE_ID"
+```
+
+### **Get Royalty Information**
+```bash
+# Returns: [500, collection_block, collection_tx] (5% royalty)
+oyl provider alkanes --method call \
+  --calldata "89" \
+  --alkane-id "NFT_ALKANE_ID"
+```
+
+---
+
+## 🔧 **Configuration Constants**
+
+```rust
+/// Royalty configuration
+const ROYALTY_PERCENTAGE: u128 = 500;         // 5% in basis points (500/10000)
+const MIN_ROYALTY_AMOUNT: u128 = 1000;        // Minimum 1000 sats royalty
+const PAYMENT_TOKEN_ID: AlkaneId = AlkaneId { block: 0, tx: 0 }; // BTC token for royalties
+
+/// Update PAYMENT_TOKEN_ID for mainnet:
+/// Regtest: AlkaneId { block: 0, tx: 0 }
+/// Mainnet: AlkaneId { block: 2, tx: 9000 } // frBTC example
 ```
 
 ---
